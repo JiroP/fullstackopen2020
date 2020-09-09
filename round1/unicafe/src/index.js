@@ -26,6 +26,10 @@ const Statistics = ({ bad, neutral, good }) => {
             <StatisticLine description="bad" amount={bad} />
             <StatisticLine description="all" amount={sum} />
             <StatisticLine description="average" amount={average} />
+            <StatisticLine
+              description="positive"
+              amount={`${(good * 100) / sum} %`}
+            />
           </tbody>
         </table>
       ) : (

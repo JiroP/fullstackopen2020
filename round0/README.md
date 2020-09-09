@@ -1,5 +1,6 @@
 
-#Tehtävät 0 kierros
+# Tehtävät 0 kierros
+
 ## 0.4 uusi muistiinpano
 
 ![Tehtävä 0.4](./images/0_4.png)

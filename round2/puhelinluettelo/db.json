@@ -2,18 +2,8 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "number": "040-123456",
+      "number": "040-530",
       "id": 1
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": 3
-    },
-    {
-      "name": "Hellurei",
-      "number": "updated",
-      "id": 4
     }
   ]
 }

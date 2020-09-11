@@ -3,12 +3,15 @@ import PersonForm from "./components/PersonForm";
 import Filter from "./components/Filter";
 import Persons from "./components/Persons";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchString, setSearchString] = useState("");
+  const [notification, setNotification] = useState(null);
+  const [notificationColor, setNotificationColor] = useState("green");
 
   useEffect(() => {
     personService.getAll().then((numbers) => setPersons(numbers));
@@ -26,6 +29,10 @@ const App = () => {
     setSearchString(event.target.value);
   };
 
+  const cleanUpNotificationWithTimeOut = () => {
+    setTimeout(() => setNotification(null), 3000);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const personWithSameName = persons.find(({ name }) => name === newName);
@@ -38,11 +45,19 @@ const App = () => {
         personService
           .updateNumber(personObject.id, personObject)
           .then((updatedPerson) => {
+            setNotification(
+              `${updatedPerson.name} number updated to ${updatedPerson.number}`
+            );
+            setNotificationColor("green");
             setPersons(
               persons.map((person) =>
                 person.id === updatedPerson.id ? updatedPerson : person
               )
             );
+            cleanUpNotificationWithTimeOut();
+          })
+          .catch((error) => {
+            handleError(newName, personWithSameName.id);
           });
       }
     } else {
@@ -51,22 +66,37 @@ const App = () => {
         setPersons(persons.concat(createdPerson));
         setNewName("");
         setNewNumber("");
+        setNotification(`${createdPerson.name} added`);
+        setNotificationColor("green");
+        cleanUpNotificationWithTimeOut();
       });
     }
   };
 
-  const handleDelete = (id) => {
-    const confirmed = window.confirm(
-      `Delete ${persons.find((person) => person.id === id).name} ?`
+  const handleError = (name, id) => {
+    setPersons(persons.filter((person) => person.id !== id));
+    setNotification(
+      `Information of ${name} has already been removed from server`
     );
+    setNotificationColor("red");
+    cleanUpNotificationWithTimeOut();
+  };
+
+  const handleDelete = (id) => {
+    const person = persons.find((person) => person.id === id);
+    const confirmed = window.confirm(`Delete ${person.name} ?`);
     if (confirmed) {
-      personService.deleteNumber(id).then((statusCode) => {
-        if (statusCode === 200) {
+      personService
+        .deleteNumber(id)
+        .then((statusCode) => {
           setPersons(persons.filter((person) => person.id !== id));
-        } else {
-          window.alert("Deletion not successful: ", statusCode);
-        }
-      });
+          setNotification(`${person.name} was deleted`);
+          setNotificationColor("green");
+          cleanUpNotificationWithTimeOut();
+        })
+        .catch((error) => {
+          handleError(person.name, person.id);
+        });
     }
   };
 
@@ -77,6 +107,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} color={notificationColor} />
       <Filter
         searchString={searchString}
         handleSearchChange={handleSearchChange}

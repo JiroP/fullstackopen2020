@@ -3,9 +3,10 @@ import axios from "axios";
 import Filter from "./components/Filter";
 import Countries from "./components/Countries";
 
-const App = (props) => {
+const App = () => {
   const [countries, setCountries] = useState([]);
   const [searchString, setSearchString] = useState("");
+  const [showCountry, setShowCountry] = useState("");
 
   useEffect(() => {
     axios.get("https://restcountries.eu/rest/v2/all").then((response) => {
@@ -15,11 +16,16 @@ const App = (props) => {
 
   const handleSearchChange = (event) => {
     setSearchString(event.target.value);
+    setShowCountry("");
   };
 
-  const shownCountries = countries.filter(({ name }) =>
-    name.toLowerCase().includes(searchString.toLowerCase())
-  );
+  const shownCountries = showCountry
+    ? countries.filter(
+        ({ name }) => name.toLowerCase() === showCountry.toLowerCase()
+      )
+    : countries.filter(({ name }) =>
+        name.toLowerCase().includes(searchString.toLowerCase())
+      );
 
   return (
     <div>
@@ -27,7 +33,11 @@ const App = (props) => {
         searchString={searchString}
         handleSearchChange={handleSearchChange}
       />
-      <Countries countries={shownCountries} />
+      <Countries
+        countries={shownCountries}
+        showCountry={showCountry}
+        setShowCountry={setShowCountry}
+      />
     </div>
   );
 };

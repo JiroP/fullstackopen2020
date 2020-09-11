@@ -1,7 +1,7 @@
 import React from "react";
+import Weather from "./Weather";
 
 const CountryDetails = (props) => {
-
   return (
     <div>
       <h1>{props.country.name}</h1>
@@ -16,7 +16,14 @@ const CountryDetails = (props) => {
           <li key={iso639_2}>{name}</li>
         ))}
       </ul>
-      <img src={props.country.flag} alt={`${props.country.name} flag`} />
+      <img
+        src={props.country.flag}
+        alt={`${props.country.name} flag`}
+        width="200"
+        height="133"
+      />
+      <h2>weather in {props.country.capital}</h2>
+      <Weather city={props.country.capital} />
     </div>
   );
 };

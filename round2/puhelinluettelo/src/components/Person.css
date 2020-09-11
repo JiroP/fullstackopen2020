@@ -1,0 +1,8 @@
+p.person {
+  display: inline-block;
+}
+
+button.delete {
+  position: relative;
+  left: 10px;
+}

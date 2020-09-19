@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 // eslint-disable-next-line node/no-unpublished-require
+const jwt = require('jsonwebtoken');
 const supertest = require('supertest');
 const helper = require('./test_helper');
 const app = require('../app');
@@ -7,6 +8,22 @@ const app = require('../app');
 const api = supertest(app);
 
 const Blog = require('../models/blog');
+const User = require('../models/user');
+
+const userInfo = {
+  username: 'root',
+  name: 'superuser',
+};
+
+let userJwt;
+
+beforeAll(async () => {
+  await User.deleteMany({});
+  await new User(userInfo).save();
+  const users = await User.find({});
+  const { username, _id } = users[0];
+  userJwt = jwt.sign({ username, id: _id }, process.env.SECRET);
+});
 
 beforeEach(async () => {
   await Blog.deleteMany({});
@@ -34,12 +51,15 @@ test('blogs identifier is named id', async () => {
 
 describe('post operation for blog', () => {
   beforeEach(async () => {
-    await api.post('/api/blogs').send({
-      title: 'Type warsss',
-      author: 'Robert C. Martin',
-      url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-      // likes: 0,
-    });
+    await api
+      .post('/api/blogs')
+      .send({
+        title: 'Type warsss',
+        author: 'Robert C. Martin',
+        url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+        // likes: 0,
+      })
+      .set({ Authorization: `bearer ${userJwt}` });
   });
 
   test(' length is incremented by 1', async () => {
@@ -66,11 +86,29 @@ describe('post operation for blog', () => {
   });
 });
 
+test('post operation with invalid or missing token returns 401 and does not add a blog', async () => {
+  const blogsAtStart = await api.get('/api/blogs');
+
+  await api
+    .post('/api/blogs')
+    .send({
+      title: 'Type warsss',
+      author: 'Robert C. Martin',
+      url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    })
+    .expect(401)
+    .expect('Content-Type', /application\/json/);
+
+  const blogsAtEnd = await api.get('/api/blogs');
+  expect(blogsAtEnd.body).toHaveLength(blogsAtStart.body.length);
+});
+
 describe('post operations with missing data return 400', () => {
   test(': no url', async () => {
     await api
       .post('/api/blogs')
       .send({ title: 'Type warsss', author: 'Robert C. Martin' })
+      .set({ Authorization: `bearer ${userJwt}` })
       .expect(400);
   });
 
@@ -78,6 +116,7 @@ describe('post operations with missing data return 400', () => {
     await api
       .post('/api/blogs')
       .send({ author: 'Robert C. Martin', url: 'Some url' })
+      .set({ Authorization: `bearer ${userJwt}` })
       .expect(400);
   });
 
@@ -85,6 +124,7 @@ describe('post operations with missing data return 400', () => {
     await api
       .post('/api/blogs')
       .send({ author: 'Robert C. Martin' })
+      .set({ Authorization: `bearer ${userJwt}` })
       .expect(400);
   });
 });

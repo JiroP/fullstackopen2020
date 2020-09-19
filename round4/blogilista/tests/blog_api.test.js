@@ -66,7 +66,7 @@ describe('post operation for blog', () => {
   });
 });
 
-describe('post operations with missing data', () => {
+describe('post operations with missing data return 400', () => {
   test(': no url', async () => {
     await api
       .post('/api/blogs')
@@ -85,6 +85,67 @@ describe('post operations with missing data', () => {
     await api
       .post('/api/blogs')
       .send({ author: 'Robert C. Martin' })
+      .expect(400);
+  });
+});
+
+describe('delete operations', () => {
+  let response;
+  beforeEach(async () => {
+    response = await api.get('/api/blogs');
+  });
+
+  test(' of existing blog delete the id', async () => {
+    const idToBeDeleted = response.body[0].id;
+    await api.delete(`/api/blogs/${idToBeDeleted}`);
+    const blogsAtEnd = await api.get('/api/blogs');
+    const deletedBlog = blogsAtEnd.body.find(({ id }) => id === idToBeDeleted);
+    expect(deletedBlog).toBe(undefined);
+  });
+
+  test(' return 204 on valid id', async () => {
+    const idToBeDeleted = response.body[0].id;
+    await api.delete(`/api/blogs/${idToBeDeleted}`).expect(204);
+  });
+
+  test(' are idempotent', async () => {
+    const idToBeDeleted = response.body[0].id;
+    await api.delete(`/api/blogs${idToBeDeleted}`);
+    const blogsAfterOneOperation = await api.get('/api/blogs');
+
+    const deleteOps = [0, 1, 2, 3, 4, 5].map(() =>
+      api.delete(`/api/blogs${idToBeDeleted}`)
+    );
+    await Promise.all(deleteOps);
+
+    const blogsAfterDeleteOps = await api.get('/api/blogs');
+
+    expect(blogsAfterDeleteOps.body).toEqual(blogsAfterOneOperation.body);
+  });
+});
+
+describe('editing likes of a blog', () => {
+  test(' works correctly for an existing blog', async () => {
+    const blogRes = await api.get('/api/blogs');
+    const blog = blogRes.body[0];
+
+    await api.put(`/api/blogs/${blog.id}`).send({
+      author: blog.author,
+      title: blog.title,
+      url: blog.url,
+      likes: 20,
+    });
+
+    const blogsAtEnd = await api.get('/api/blogs');
+    const updatedBlog = blogsAtEnd.body.find(({ id }) => id === blog.id);
+
+    expect(updatedBlog.likes).toBe(20);
+  });
+
+  test(' returns 400 on bad id', async () => {
+    await api
+      .put(`/api/blogs/randomId}`)
+      .send({ title: 'some title', url: 'url', author: 'yes' })
       .expect(400);
   });
 });

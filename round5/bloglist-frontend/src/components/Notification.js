@@ -1,24 +1,24 @@
-import React from "react";
+import React from 'react'
 
 const Notification = ({ message, color }) => {
   const notificationStyle = {
     color,
-    background: "lightgrey",
+    background: 'lightgrey',
     fontSize: 20,
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
-  };
+  }
 
   if (message === null) {
-    return null;
+    return null
   }
   return (
     <div className="notification" style={notificationStyle}>
       {message}
     </div>
-  );
-};
+  )
+}
 
-export default Notification;
+export default Notification

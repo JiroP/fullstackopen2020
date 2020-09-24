@@ -1,35 +1,35 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, handleUpdate, handleDelete, user }) => {
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(false)
 
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: "solid",
+    border: 'solid',
     borderWidth: 1,
     marginBottom: 5
-  };
+  }
 
   const toggleShow = () => {
-    setShowDetails(!showDetails);
-  };
+    setShowDetails(!showDetails)
+  }
 
   const handleLike = () => {
-    handleUpdate(blog);
-  };
+    handleUpdate(blog)
+  }
 
   const removeBlog = () => {
     if (window.confirm(`Remove blog ${blog.title}by ${blog.author}`)) {
-      handleDelete();
+      handleDelete()
     }
-  };
+  }
 
   return (
     <div style={blogStyle}>
-      {blog.title} {blog.author}{" "}
-      <button onClick={toggleShow}>{showDetails ? "hide" : "view"}</button>
+      {blog.title} {blog.author}{' '}
+      <button onClick={toggleShow}>{showDetails ? 'hide' : 'view'}</button>
       {showDetails && (
         <>
           <div>{blog.url}</div>
@@ -43,14 +43,14 @@ const Blog = ({ blog, handleUpdate, handleDelete, user }) => {
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   handleUpdate: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired
-};
+}
 
-export default Blog;
+export default Blog

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
+import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
+import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -9,10 +11,9 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
   const [notification, setNotification] = useState(null);
+
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -54,10 +55,10 @@ const App = () => {
     setUser(null);
   };
 
-  const handleCreate = async (event) => {
+  const handleCreate = async (blogObject) => {
     try {
-      event.preventDefault();
-      const blog = await blogService.create({ title, author, url });
+      blogFormRef.current.toggleVisibility();
+      const blog = await blogService.create(blogObject);
       setNotification({
         message: `a new blog ${blog.title} by ${blog.author} added`,
         color: "green"
@@ -70,6 +71,43 @@ const App = () => {
       console.log(error);
     }
   };
+
+  const handleUpdate = async (blogObject) => {
+    try {
+      const updatedObject = {
+        ...blogObject,
+        user: blogObject.user.id,
+        likes: blogObject.likes + 1
+      };
+      await blogService.update(blogObject.id, updatedObject);
+      setBlogs(
+        blogs.map((blog) =>
+          blog.id === blogObject.id
+            ? { ...blogObject, likes: blogObject.likes + 1 }
+            : blog
+        )
+      );
+    } catch (error) {
+      setNotification({ message: error.response.data.error, color: "red" });
+      notificationCleanUpWithTimeOut();
+      console.log(error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await blogService.destroy(id);
+      setBlogs(blogs.filter((blog) => blog.id !== id));
+      setNotification({ message: "blog deleted", color: "green" });
+      notificationCleanUpWithTimeOut();
+    } catch (error) {
+      setNotification({ message: error.response.data.error, color: "red" });
+      notificationCleanUpWithTimeOut();
+      console.log(error);
+    }
+  };
+
+  const sortedBlogs = blogs.sort((a, b) => (a.likes > b.likes ? -1 : 1));
 
   return (
     <div>
@@ -85,39 +123,17 @@ const App = () => {
           <p>
             {user.name} logged in <button onClick={handleLogout}>logout</button>
           </p>
-          <h2>create new</h2>
-          <form onSubmit={handleCreate}>
-            <div>
-              title:
-              <input
-                type="text"
-                value={title}
-                name="Title"
-                onChange={({ target }) => setTitle(target.value)}
-              />
-            </div>
-            <div>
-              author:
-              <input
-                type="text"
-                value={author}
-                name="Author"
-                onChange={({ target }) => setAuthor(target.value)}
-              />
-            </div>
-            <div>
-              url:
-              <input
-                type="text"
-                value={url}
-                name="Url"
-                onChange={({ target }) => setUrl(target.value)}
-              />
-            </div>
-            <button type="submit"> create</button>
-          </form>
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+          <Togglable buttonLabel={"new blog"} ref={blogFormRef}>
+            <BlogForm handleCreate={handleCreate} />
+          </Togglable>
+          {sortedBlogs.map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleUpdate={handleUpdate}
+              handleDelete={() => handleDelete(blog.id)}
+              user={user}
+            />
           ))}
         </>
       ) : (

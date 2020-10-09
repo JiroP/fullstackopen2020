@@ -32,7 +32,7 @@ const reducer = (state = initialState, action) => {
           : anecdote
       );
     }
-    case "CREATE": {
+    case "CREATE_ANECDOTE": {
       const anecdote = action.data;
       console.log(anecdote);
       return [...state, anecdote];
@@ -45,18 +45,18 @@ const reducer = (state = initialState, action) => {
 
 export const voteForAnecdote = (id) => {
   return {
-    type: 'VOTE',
+    type: "VOTE",
     data: {
       id
     }
-  }
-}
+  };
+};
 
 export const createAnecdote = (anecdote) => {
   return {
-    type: 'CREATE',
+    type: "CREATE_ANECDOTE",
     data: asObject(anecdote)
-  }
-}
+  };
+};
 
 export default reducer;

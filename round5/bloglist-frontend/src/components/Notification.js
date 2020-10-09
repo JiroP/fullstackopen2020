@@ -15,7 +15,7 @@ const Notification = ({ message, color }) => {
     return null
   }
   return (
-    <div className="notification" style={notificationStyle}>
+    <div id="notification" className="notification" style={notificationStyle}>
       {message}
     </div>
   )

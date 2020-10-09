@@ -59,6 +59,7 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility()
       const blog = await blogService.create(blogObject)
+      console.log(blog)
       setNotification({
         message: `a new blog ${blog.title} by ${blog.author} added`,
         color: 'green'
@@ -145,10 +146,11 @@ const App = () => {
               color={notification.color}
             />
           )}
-          <form onSubmit={handleLogin}>
+          <form id="login-form" onSubmit={handleLogin}>
             <div>
               username
               <input
+                id="username"
                 type="text"
                 value={username}
                 name="Username"
@@ -158,13 +160,16 @@ const App = () => {
             <div>
               password
               <input
+                id="password"
                 type="password"
                 value={password}
                 name="Password"
                 onChange={({ target }) => setPassword(target.value)}
               />
             </div>
-            <button type="submit">login</button>
+            <button id="submit" type="submit">
+              login
+            </button>
           </form>
         </>
       )}

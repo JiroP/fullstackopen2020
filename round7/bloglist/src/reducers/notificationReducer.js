@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 const initialState = { message: '', severity: 'success' }
 
 const reducer = (state = initialState, action) => {

@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import blogService from '../services/blogs'
 import { setNotification } from './notificationReducer'
 
@@ -76,6 +77,7 @@ export const createBlog = (blog) => {
 export const likeBlog = (blog) => {
   return async (dispatch) => {
     try {
+      // eslint-disable-next-line no-unused-vars
       const { user, ...blogWithoutUser } = blog
       const updatedBlog = await blogService.update(blog.id, {
         ...blogWithoutUser,

@@ -1,24 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { setNotification } from './reducers/notification'
+import { initializeBlogs } from './reducers/blogReducer'
+import { setNotification } from './reducers/notificationReducer'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  // const [blogs, setBlogs] = useState([])
+  const blogs = useSelector((state) => state.blogs)
   const dispatch = useDispatch()
   const [user, setUser] = useState(null)
 
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+    dispatch(initializeBlogs())
+    // blogService.getAll().then((blogs) => setBlogs(blogs))
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -57,7 +60,7 @@ const App = () => {
       dispatch(
         setNotification(`a new blog ${blog.title} by ${blog.author} added`, 'success')
       )
-      setBlogs(blogs.concat(blog))
+      // setBlogs(blogs.concat(blog))
     } catch (error) {
       dispatch(setNotification(error.response.data.error, 'error'))
       console.log(error)
@@ -72,13 +75,13 @@ const App = () => {
         likes: blogObject.likes + 1
       }
       await blogService.update(blogObject.id, updatedObject)
-      setBlogs(
-        blogs.map((blog) =>
-          blog.id === blogObject.id
-            ? { ...blogObject, likes: blogObject.likes + 1 }
-            : blog
-        )
-      )
+      // setBlogs(
+      //   blogs.map((blog) =>
+      //     blog.id === blogObject.id
+      //       ? { ...blogObject, likes: blogObject.likes + 1 }
+      //       : blog
+      //   )
+      // )
     } catch (error) {
       dispatch(setNotification(error.response.data.error, 'error'))
       console.log(error)
@@ -88,7 +91,7 @@ const App = () => {
   const handleDelete = async (id) => {
     try {
       await blogService.destroy(id)
-      setBlogs(blogs.filter((blog) => blog.id !== id))
+      // setBlogs(blogs.filter((blog) => blog.id !== id))
       dispatch(setNotification('blog deleted', 'success'))
     } catch (error) {
       dispatch(setNotification(error.response.data.error, 'error'))

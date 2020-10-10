@@ -5,6 +5,7 @@ import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import User from './components/User'
 import { createBlog, initializeBlogs } from './reducers/blogReducer'
 import { login, loginWithLocalStorage, logout } from './reducers/userReducer'
 
@@ -52,6 +53,7 @@ const App = () => {
             <BlogForm handleCreate={handleCreate} />
           </Togglable>
           <BlogList user={user} />
+          <User user={user}/>
         </>
       ) : (
         <LoginForm handleLogin={handleLogin} />

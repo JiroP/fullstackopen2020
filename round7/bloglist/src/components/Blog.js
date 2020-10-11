@@ -12,6 +12,11 @@ const Blog = ({ blog, user }) => {
     dispatch(likeBlog(blog))
   }
 
+  const handleComment = (event) => {
+    event.preventDefault()
+    console.log(event.target.comment.value)
+  }
+
   const removeBlog = () => {
     if (window.confirm(`Remove blog ${blog.title}by ${blog.author}`)) {
       dispatch(removeBlogByID(blog.id))
@@ -40,6 +45,9 @@ const Blog = ({ blog, user }) => {
         <button onClick={removeBlog}>remove</button>
       )}
       <h3>comments</h3>
+      <form onSubmit={handleComment}>
+        <input name="comment" type="text"/> <button type="submit">add comment</button>
+      </form>
       {blog.comments &&
         blog.comments.map((comment) => (
           <ul key={comment}>

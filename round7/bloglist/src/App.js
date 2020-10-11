@@ -7,16 +7,30 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import User from './components/User'
 import { createBlog, initializeBlogs } from './reducers/blogReducer'
-import { login, loginWithLocalStorage, logout } from './reducers/userReducer'
+import { login, loginWithLocalStorage, logout } from './reducers/loginReducer'
+import {
+  Route,
+  useRouteMatch,
+  Switch,
+} from 'react-router-dom'
+import UserList from './components/UserList'
+import { initializeUsers } from './reducers/usersReducer'
+import Blog from './components/Blog'
+import Menu from './components/Menu'
 
 const App = () => {
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.user)
+  const { loggedUser, users, blogs } = useSelector((state) => ({
+    loggedUser: state.user,
+    users: state.users,
+    blogs: state.blogs
+  }))
 
   const blogFormRef = useRef()
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   }, [dispatch])
 
   useEffect(() => {
@@ -40,21 +54,40 @@ const App = () => {
     dispatch(createBlog(blogObject))
   }
 
+  const getUserByID = (id) => users.find((u) => u.id === id)
+  const getBlogByID = (id) => blogs.find((b) => b.id === id)
+
+  const match = useRouteMatch('/users/:id')
+  const user = match ? getUserByID(match.params.id) : null
+
+  const blogMatch = useRouteMatch('/blogs/:id')
+  const blog = blogMatch ? getBlogByID(blogMatch.params.id) : null
+
   return (
     <div>
-      {user ? (
-        <>
+      {loggedUser ? (
+        <div>
+          <Menu user={loggedUser} handleLogout={handleLogout} />
           <h2>blogs</h2>
           <Notification />
-          <p>
-            {user.name} logged in <button onClick={handleLogout}>logout</button>
-          </p>
-          <Togglable buttonLabel={'new blog'} ref={blogFormRef}>
-            <BlogForm handleCreate={handleCreate} />
-          </Togglable>
-          <BlogList user={user} />
-          <User user={user}/>
-        </>
+          <Switch>
+            <Route path="/users/:id">
+              <User user={user} />
+            </Route>
+            <Route path="/users">
+              <UserList />
+            </Route>
+            <Route path="/blogs/:id">
+              <Blog blog={blog} user={loggedUser} />
+            </Route>
+            <Route path="/">
+              <Togglable buttonLabel={'new blog'} ref={blogFormRef}>
+                <BlogForm handleCreate={handleCreate} />
+              </Togglable>
+              <BlogList blogs={blogs} />
+            </Route>
+          </Switch>
+        </div>
       ) : (
         <LoginForm handleLogin={handleLogin} />
       )}

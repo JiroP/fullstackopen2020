@@ -56,8 +56,17 @@ blogsRouter.put('/:id', async (request, response) => {
   const blog = request.body;
   const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
     new: true,
-  });
+  }).populate('user', { username: 1, name: 1 });
   response.json(updatedBlog.toJSON());
+});
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const { comment } = request.body;
+  const blog = await Blog.findById(request.params.id);
+  blog.comments = blog.comments ? blog.comments.concat(comment) : [];
+  console.log(comment);
+  const savedBlog = await blog.save();
+  response.json(savedBlog.toJSON());
 });
 
 module.exports = blogsRouter;

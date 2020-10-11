@@ -74,6 +74,21 @@ export const createBlog = (blog) => {
   }
 }
 
+export const commentBlog = (id, comment) => {
+  return async (dispatch) => {
+    try {
+      const updatedBlog = await blogService.comment(id, comment)
+      dispatch({
+        type: 'UPDATE_BLOG',
+        data: { id, updatedBlog }
+      })
+      dispatch(setNotification(`Commented: ${comment}`, 'success'))
+    } catch (e) {
+      dispatch(setNotification(e.response.data.error, 'error'))
+    }
+  }
+}
+
 export const likeBlog = (blog) => {
   return async (dispatch) => {
     try {
@@ -90,6 +105,7 @@ export const likeBlog = (blog) => {
           updatedBlog
         }
       })
+      dispatch(setNotification(`Liked ${blog.title} by ${blog.author}`, 'success'))
     } catch (e) {
       dispatch(setNotification(e.response.data.error, 'error'))
     }

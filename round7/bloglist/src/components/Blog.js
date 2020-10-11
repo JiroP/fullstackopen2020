@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
-import { likeBlog, removeBlogByID } from '../reducers/blogReducer'
+import { commentBlog, likeBlog, removeBlogByID } from '../reducers/blogReducer'
 import { useHistory } from 'react-router-dom'
 
 const Blog = ({ blog, user }) => {
@@ -14,7 +14,8 @@ const Blog = ({ blog, user }) => {
 
   const handleComment = (event) => {
     event.preventDefault()
-    console.log(event.target.comment.value)
+    dispatch(commentBlog(blog.id, event.target.comment.value))
+    // console.log(event.target.comment.value)
   }
 
   const removeBlog = () => {

@@ -8,13 +8,10 @@ import Togglable from './components/Togglable'
 import User from './components/User'
 import { createBlog, initializeBlogs } from './reducers/blogReducer'
 import { login, loginWithLocalStorage, logout } from './reducers/loginReducer'
-import {
-  Route,
-  useRouteMatch,
-  Switch,
-} from 'react-router-dom'
+import { Route, useRouteMatch, Switch } from 'react-router-dom'
 import UserList from './components/UserList'
 import { initializeUsers } from './reducers/usersReducer'
+import { Container } from '@material-ui/core'
 import Blog from './components/Blog'
 import Menu from './components/Menu'
 
@@ -64,7 +61,7 @@ const App = () => {
   const blog = blogMatch ? getBlogByID(blogMatch.params.id) : null
 
   return (
-    <div>
+    <Container>
       {loggedUser ? (
         <div>
           <Menu user={loggedUser} handleLogout={handleLogout} />
@@ -91,7 +88,7 @@ const App = () => {
       ) : (
         <LoginForm handleLogin={handleLogin} />
       )}
-    </div>
+    </Container>
   )
 }
 

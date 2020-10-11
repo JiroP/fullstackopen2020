@@ -15,6 +15,7 @@ const Blog = ({ blog, user }) => {
   const handleComment = (event) => {
     event.preventDefault()
     dispatch(commentBlog(blog.id, event.target.comment.value))
+    event.target.comment.value = ''
     // console.log(event.target.comment.value)
   }
 
@@ -47,7 +48,8 @@ const Blog = ({ blog, user }) => {
       )}
       <h3>comments</h3>
       <form onSubmit={handleComment}>
-        <input name="comment" type="text"/> <button type="submit">add comment</button>
+        <input name="comment" type="text" />{' '}
+        <button type="submit">add comment</button>
       </form>
       {blog.comments &&
         blog.comments.map((comment) => (

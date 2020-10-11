@@ -1,9 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Notification from './Notification'
+import { TextField, Button } from '@material-ui/core'
+import { useDispatch } from 'react-redux'
+import { login } from '../reducers/loginReducer'
 
-const LoginForm = ({ handleLogin }) => {
-  const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
+const LoginForm = () => {
+  const dispatch = useDispatch()
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    const username = event.target.username.value
+    const password = event.target.password.value
+    dispatch(login(username, password))
+  }
 
   return (
     <>
@@ -11,31 +20,17 @@ const LoginForm = ({ handleLogin }) => {
       <Notification />
       <form
         id="login-form"
-        onSubmit={(e) => handleLogin(e, username, password)}
+        onSubmit={handleSubmit}
       >
         <div>
-          username
-          <input
-            id="username"
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
+          <TextField name="username" label="username" />
         </div>
         <div>
-          password
-          <input
-            id="password"
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
+          <TextField name="password" label="password" type="password" />
         </div>
-        <button id="submit" type="submit">
+        <Button variant="contained" color="primary" id="submit" type="submit">
           login
-        </button>
+        </Button>
       </form>
     </>
   )

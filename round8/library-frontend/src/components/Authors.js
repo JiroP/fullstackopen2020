@@ -23,7 +23,9 @@ const Authors = (props) => {
   const submit = async (event) => {
     event.preventDefault();
 
-    editAuthor({ variables: { name: selectedOption.value, setBornTo: parseInt(born) } });
+    editAuthor({
+      variables: { name: selectedOption.value, setBornTo: parseInt(born) }
+    });
 
     setBorn("");
   };
@@ -57,29 +59,28 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <h3>Set birthyear</h3>
-      <form onSubmit={submit}>
-        <div>
-          <Select
-            defaultValue={selectedOption}
-            onChange={setSelectedOption}
-            options={options}
-          />
-          {/* name
-          <input
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          /> */}
-        </div>
-        <div>
-          born
-          <input
-            value={born}
-            onChange={(event) => setBorn(event.target.value)}
-          />
-        </div>
-        <button type="submit">update author</button>
-      </form>
+      {props.token && (
+        <>
+          <h3>Set birthyear</h3>
+          <form onSubmit={submit}>
+            <div>
+              <Select
+                defaultValue={selectedOption}
+                onChange={setSelectedOption}
+                options={options}
+              />
+            </div>
+            <div>
+              born
+              <input
+                value={born}
+                onChange={(event) => setBorn(event.target.value)}
+              />
+            </div>
+            <button type="submit">update author</button>
+          </form>
+        </>
+      )}
     </div>
   );
 };

@@ -24,7 +24,7 @@ const Books = (props) => {
     } else {
       setRenderedBooks(allBooks);
     }
-  }, [filter]) //eslint-disable-line
+  }, [filter]); //eslint-disable-line
 
   useEffect(() => {
     if (data) {
@@ -42,7 +42,7 @@ const Books = (props) => {
 
   return (
     <div>
-      <h2>books</h2>
+      <h2>books {filter && `by genre ${filter}`}</h2>
 
       <table>
         <tbody>

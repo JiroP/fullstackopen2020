@@ -3,11 +3,15 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
+import { CURRENT_USER_INFO } from "./queries";
+import Recommended from "./components/Recommended";
 
 const App = () => {
   const [page, setPage] = useState("authors");
   const [token, setToken] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const result = useQuery(CURRENT_USER_INFO);
   const client = useApolloClient();
 
   const handleLogout = () => {
@@ -23,6 +27,12 @@ const App = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (token && result.data) {
+      setCurrentUser(result.data.me);
+    }
+  }, [token, result]);
+
   return (
     <div>
       <div>
@@ -34,11 +44,16 @@ const App = () => {
           <button onClick={() => setPage("login")}>login</button>
         )}
         {token && <button onClick={() => setPage("add")}>add book</button>}
+        {token && (
+          <button onClick={() => setPage("recommended")}>recommended</button>
+        )}
       </div>
 
       <Authors token={token} show={page === "authors"} />
 
       <Books show={page === "books"} />
+
+      <Recommended show={page === "recommended"} currentUser={currentUser} />
 
       <NewBook show={page === "add"} />
 

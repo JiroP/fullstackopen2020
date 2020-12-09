@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, UserInputError } = require('apollo-server')
 
 const config = require('./utils/config')
 const mongoose = require('mongoose')
@@ -142,28 +142,38 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
     allBooks: (root, args) => {
-      let filteredBooks = args.author ? books.filter(({author}) => author === args.author) : books
-      filteredBooks = args.genre ? filteredBooks.filter(({genres}) => genres.includes(args.genre)) : filteredBooks
-      return filteredBooks
+      return Book.find({}).populate('author');
+      // let filteredBooks = args.author ? books.filter(({author}) => author === args.author) : books
+      // filteredBooks = args.genre ? filteredBooks.filter(({genres}) => genres.includes(args.genre)) : filteredBooks
+      // return filteredBooks
     },
-    allAuthors: () => authors
+    allAuthors: () => Author.find({})
   },
   Author: {
     bookCount: (root) => books.filter(({author}) => author === root.name).length
   },
   Mutation: {
-    addBook: (root, args) => {
-      if (!authors.find(({name}) => name === args.author)) {
-        const author = { name: args.author, id: uuid() }
-        authors = authors.concat(author)
-      }
+    addBook: async (root, args) => {
+      try {
+        let author = await Author.findOne({name: args.author})
 
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
-      return book
+        if (!author) {
+          author = new Author({name: args.author})
+          await author.save()
+        }
+
+        const book = new Book({...args, author: author})
+        await book.save()
+        
+        return book
+      } catch (e) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args
+        })
+      }
     },
     editAuthor: (root, args) => {
       const author = authors.find(({name}) => name === args.name)

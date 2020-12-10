@@ -8,6 +8,36 @@ interface excerciseReport {
   ratingDescription: string  
 }
 
+interface excerciseInformation {
+  dailyTraining: Array<number>,
+  target: number
+}
+
+const parseArgumentsToArray = (args: Array<string>): excerciseInformation => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+
+  if (!isNaN(Number(args[2]))) {
+    const target = Number(args[2]);
+
+    const trainingArgs = args.slice(3);
+    const dailyTraining = trainingArgs.map((arg) => {
+      if (!isNaN(Number(arg))) {
+        return Number(arg);
+      }
+      else {
+        throw new Error('Invalid value ')
+      }
+    })
+    return {
+      dailyTraining,
+      target
+    }
+  }
+  else {
+    throw new Error('Invalid target value');
+  }
+}
+
 const calculateRating = (average: number, target: number): number => {
   const relativeResult: number = (average - target) / target;
   if (relativeResult < -0.5) {
@@ -50,4 +80,11 @@ const calculateExcercises = (dailyTraining: Array<number>, target: number): exce
   }
 }
 
-console.log(calculateExcercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+// console.log(calculateExcercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+
+try {
+  const { dailyTraining, target } = parseArgumentsToArray(process.argv);
+  console.log(calculateExcercises(dailyTraining, target));
+} catch (e) {
+  console.log('error: ', e.message)
+}

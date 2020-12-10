@@ -11,11 +11,11 @@ const parseArguments = (args: Array<string>): MultiplyValues => {
     return {
       value1: Number(args[2]),
       value2: Number(args[3])
-    }
+    };
   } else {
     throw new Error('Provided values were not numbers!');
   }
-}
+};
 
 const calculateBmi = (height: number, weight: number): string => {
   const bmi = (weight / Math.pow(height / 100, 2));
@@ -45,13 +45,23 @@ const calculateBmi = (height: number, weight: number): string => {
     result = 'Obese Class III (Very severely obese)';
   }
   return result;
-}
+};
 
 // console.log(calculateBmi(180, 74));
+export const bmiCalculator = (height : string, weight: string): string => {
+  try {
+    const { value1, value2 } = parseArguments(["0", "0", height, weight]);
+    return calculateBmi(value1, value2);
+  } catch (e) {
+    throw new Error("malformatted parameters");
+  }
+}; 
 
 try {
   const { value1, value2 } = parseArguments(process.argv);
   console.log(calculateBmi(value1, value2));
 } catch (e) {
-  console.log('Error:', e.message);
+  if (e instanceof Error) {
+    console.log('Error:', e.message);
+  }
 }

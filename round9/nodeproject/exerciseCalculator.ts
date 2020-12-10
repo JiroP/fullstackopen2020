@@ -25,18 +25,18 @@ const parseArgumentsToArray = (args: Array<string>): excerciseInformation => {
         return Number(arg);
       }
       else {
-        throw new Error('Invalid value ')
+        throw new Error('Invalid value ');
       }
-    })
+    });
     return {
       dailyTraining,
       target
-    }
+    };
   }
   else {
     throw new Error('Invalid target value');
   }
-}
+};
 
 const calculateRating = (average: number, target: number): number => {
   const relativeResult: number = (average - target) / target;
@@ -49,7 +49,7 @@ const calculateRating = (average: number, target: number): number => {
   else {
     return 3;
   }
-}
+};
 
 const descriptionForRating = (rating: number): string => {
   switch (rating) {
@@ -57,10 +57,10 @@ const descriptionForRating = (rating: number): string => {
       return 'could be better';
     case 2:
       return 'Not too bad!';
-    case 3: 
+    default: 
       return 'Smashed it!';
   }
-}
+};
 
 const calculateExcercises = (dailyTraining: Array<number>, target: number): excerciseReport => {
   const periodLength: number = dailyTraining.length;
@@ -77,8 +77,8 @@ const calculateExcercises = (dailyTraining: Array<number>, target: number): exce
     ratingDescription,
     success,
     target
-  }
-}
+  };
+};
 
 // console.log(calculateExcercises([3, 0, 2, 4.5, 0, 3, 1], 2))
 
@@ -86,5 +86,7 @@ try {
   const { dailyTraining, target } = parseArgumentsToArray(process.argv);
   console.log(calculateExcercises(dailyTraining, target));
 } catch (e) {
-  console.log('error: ', e.message)
+  if (e instanceof Error) {
+    console.log('error: ', e.message);
+  }
 }

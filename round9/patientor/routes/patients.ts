@@ -4,6 +4,25 @@ import toNewPatientEntry from '../utils';
 
 const router = express.Router();
 
+router.get('/:id', (req, res) => {
+  const id: string = req.params.id;
+  try {
+    const patient = patientService.getPatientById(id);
+    res.json(patient);
+  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (error.message === "not found") {
+      res.status(404).send("not found");
+    }
+    else {
+      res.status(400).send("missing id");
+    }
+  }
+  
+
+
+});
+
 router.get('/', (_req, res) => {
   res.send(patientService.getNonSensitiveEntries());
 });

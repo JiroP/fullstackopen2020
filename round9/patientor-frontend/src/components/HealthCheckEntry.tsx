@@ -21,7 +21,7 @@ const HealthCheckEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
         Health status: {healthCheckStrings[entry.healthCheckRating]}
       </div>
       <div>
-        {entry.diagnosisCodes && entry.diagnosisCodes.map((code) => <p key={code}>code: {code} {diagnosis[code].name}</p>)}
+        {entry.diagnosisCodes && entry.diagnosisCodes.map((code) => (diagnosis[code] && <p key={code}>code: {code} {diagnosis[code].name}</p>))}
       </div>
     </div>
   );

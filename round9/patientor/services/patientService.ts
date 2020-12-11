@@ -27,7 +27,7 @@ const isHealthCheckRating = (param: any): param is HealthCheckRating => {
 };
 
 const parseHealthCheckRating = (param: any): HealthCheckRating => {
-  if (param && isHealthCheckRating(param)) {
+  if ((param || param === 0) && isHealthCheckRating(param)) {
     return param;
   }
   throw new Error('malformatted parameters');

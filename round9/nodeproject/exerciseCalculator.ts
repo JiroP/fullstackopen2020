@@ -80,7 +80,40 @@ const calculateExcercises = (dailyTraining: Array<number>, target: number): exce
   };
 };
 
-// console.log(calculateExcercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+const validateNumberArray = (arr: Array<number>): Array<number> => {
+  if (arr && !arr.length) {
+    throw new Error('malformatted parameters');
+  }
+  const numArray = arr.map((num) => {
+    if(!isNaN(Number(num))) {
+      return Number(num);
+    }
+    else {
+      throw new Error('malformatted parameters');
+    }
+  });
+
+  return numArray;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const exerciseCalculator = (daily_training: Array<number>, target: number) : excerciseReport => {
+  
+  if (!daily_training || !target) {
+    throw new Error('parameters missing');
+  }
+
+  if (isNaN(Number(target))) {
+    throw new Error('malformatted parameters');
+  }
+
+  const validatedArray = validateNumberArray(daily_training);
+
+
+  const report = calculateExcercises(validatedArray, Number(target));
+  
+  return report;
+};
 
 try {
   const { dailyTraining, target } = parseArgumentsToArray(process.argv);

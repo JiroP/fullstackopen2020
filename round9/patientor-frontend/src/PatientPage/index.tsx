@@ -2,9 +2,9 @@ import React from "react";
 import axios from "axios";
 import { Patient } from "../types";
 import { apiBaseUrl } from "../constants";
-import { Icon } from "semantic-ui-react/"
+import { Icon } from "semantic-ui-react/";
 import { useParams } from "react-router-dom";
-import { useStateValue } from "../state";
+import { updatePatient, useStateValue } from "../state";
 
 const PatientPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,7 +15,7 @@ const PatientPage: React.FC = () => {
   const fetchPatientInfo = async () => {
     try {
       const { data: patientInfo } = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
-      dispatch({ type: "UPDATE_PATIENT", payload: patientInfo });
+      dispatch(updatePatient(patientInfo));
     } catch (error) {
       console.error(error.message);
     }

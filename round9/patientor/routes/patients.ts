@@ -1,8 +1,23 @@
 import express from 'express';
 import patientService from '../services/patientService';
+import { Entry } from '../types';
 import toNewPatientEntry from '../utils';
 
 const router = express.Router();
+
+router.post('/:id/entries', (req, res) => {
+  const id: string = req.params.id;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const newEntry: Entry = req.body;
+    const entry = patientService.addEntry(newEntry, id);
+
+    res.json(entry);
+  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    res.status(400).send(error.message);
+  }
+});
 
 router.get('/:id', (req, res) => {
   const id: string = req.params.id;

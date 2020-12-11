@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { NewPatientEntry, Gender } from './types';
+import { NewPatientEntry, Gender} from './types';
 
 const isGender = (param: any): param is Gender => {
   return Object.values(Gender).includes(param);
@@ -22,7 +22,8 @@ const parseDateOfBirth = (date: any): string => {
   return date;
 };
 
-const parseText = (text: any, parameterName: string): string => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const parseText = (text: any, parameterName: string): string => {
   if (!text || !isString(text)) {
     throw new Error(`Incorrect or missing ${parameterName}: ${text}`);
   }
@@ -46,5 +47,43 @@ const toNewPatientEntry = (object: any): NewPatientEntry => {
     occupation: parseText(object.occupation, 'occupation')
   };
 };
+
+// const typeIsEntry = (param: any): param is EntryTypes => {
+//   return Object.values(EntryTypes).includes(param);
+// };
+
+// const typeIsLegit = (type: any): EntryTypes => {
+//   // if (type === 'HealthCheck' || type === 'Hospital' || type === 'OccupationalHealthcare') {
+//   if (!type && typeIsEntry(type)) {
+//     return type;
+//   }
+//   throw new Error('malformatted type');
+// };
+
+// const toNewEntry = (object: any): NewEntry => {
+//   if (!object || !object.type) {
+//     throw new Error('malformatted parameters');
+//   }
+//   switch (object.type) {
+//     case "OccupationalHealthcare":
+//       return {
+//         type: typeIsLegit(object.type),
+//         description: parseText(object.description, 'description'),
+//         date: parseDateOfBirth(object.date),
+//         specialist: parseText(object.specialist, 'specialist'),
+//         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+//         diagnosisCodes: object.diagnosisCodes
+//       };
+//     case "HealthCheck":
+//       return {
+//         type: typeIsLegit(object.type),
+//         description: parseText(obje)
+//       }
+//     case "Hospital":
+
+//     default:
+//       throw new Error('Unsupported type');
+//   }
+// }
 
 export default toNewPatientEntry;

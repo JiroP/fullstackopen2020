@@ -1,17 +1,19 @@
 import React from "react";
 import { Entry } from "../types";
+import HealthCheckEntry from "./HealthCheckEntry";
+import HospitalEntry from "./HospitalEntry";
+import OccupationalHealthCareEntry from "./OccupationalHealthCareEntry";
 
 const EntryInfo: React.FC<{ entry: Entry }> = ({ entry }) => {
-  return (
-    <div>
-      <div>
-        {entry.date} {entry.description}
-      </div>
-      <div>
-        {entry.diagnosisCodes && entry.diagnosisCodes.map((code) => <p key={code}>code: {code}</p>)}
-      </div>
-    </div>
-  );
+
+  switch (entry.type) {
+    case "HealthCheck":
+      return <HealthCheckEntry entry={entry} />;
+    case "Hospital":
+      return <HospitalEntry entry={entry} />;
+    case "OccupationalHealthcare":
+      return <OccupationalHealthCareEntry entry={entry} />;
+  }
 };
 
 export default EntryInfo;
